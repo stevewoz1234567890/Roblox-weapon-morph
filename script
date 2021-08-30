@@ -1,0 +1,102 @@
+-- Made by Aurarus
+
+
+-- Settings
+
+local allow_duplicates = false
+local allow_team ={
+    "Blue Team", "Winners"
+}
+---------------------------------
+
+
+
+
+
+
+
+
+local button = script.Parent
+local startcolor = button.BrickColor
+local DB = false
+
+local toolfolder = button.Parent["Place Tool in Here! <<"]
+local toolstorage = {}
+for i, tool in pairs(toolfolder:GetChildren()) do
+    table.insert(toolstorage, tool:clone())
+end
+toolfolder:Destroy()
+
+local block = button.Parent:FindFirstChild("Block")
+if block ~= nil then
+    if block:FindFirstChild("NameDisplay") then
+        if block.NameDisplay.TextLabel.Text == "Custom Giver!" then
+            if #toolstorage > 0 then
+                block.NameDisplay.TextLabel.Text = toolstorage[1].Name
+            else
+                block.NameDisplay.TextLabel.Text = ""
+            end
+        end
+    end
+end
+
+
+button.Touched:connect(function(hit)
+    if DB then return end
+    if hit == nil then return end
+    if hit.Parent == nil then return end
+
+    local player = game.Players:GetPlayerFromCharacter(hit.Parent)
+    if player ~= nil then
+        if player:FindFirstChild("Backpack") then
+            local allow = true
+            if #allow_team > 0 then
+                local teams = game:GetService("Teams"):GetChildren()
+                if #teams > 0 then
+                    allow = false
+                    for i, team in pairs(teams) do
+                        for i, allowedteamname in pairs(allow_team) do
+                            if team.Name == allowedteamname then
+                                if player.TeamColor == team.TeamColor then
+                                    allow = true
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            if not allow_duplicates then
+                for i, tool in pairs(toolstorage) do
+                    if player.Backpack:FindFirstChild(tool.Name) then
+                        allow = false
+                    end
+                end
+            end
+            if allow then
+                DB = true
+                button.BrickColor = BrickColor.new("Black")
+                for i, tool in pairs(toolstorage) do
+                    local newtool = tool:clone()
+                    newtool.Parent = player.Backpack
+                end
+                wait(2)
+                button.BrickColor = startcolor
+                DB = false
+            end
+        end
+    end
+end)
+
+#######
+how do I use the script
+im trying to put my custom weapons into a morph
+it requires this script
+I was using the restroom
+
+I have a morph
+it has a script
+the script is supposed to give you a weapon
+when you step on the pad
+im not sure how to set it up
+
+######
